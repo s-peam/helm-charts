@@ -36,7 +36,7 @@ spec:
           volumes:
             {{- toYaml . | nindent 14 }}
           {{- end }}
-          restartPolicy: {{ default "Always" $job.restartPolicy }}
+          restartPolicy: {{ default "OnFailure" $job.restartPolicy }}
           {{- if hasKey $job "imagePullSecrets" }}
           imagePullSecrets:
             {{- range $job.imagePullSecrets }}
