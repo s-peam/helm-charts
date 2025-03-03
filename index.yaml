@@ -1,5 +1,16 @@
 apiVersion: v1
 entries:
+  cronjobs-manifest:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2025-03-03T19:20:44.151713133Z"
+    description: A Helm chart for Kubernetes
+    digest: 70cd20764f131b92e7ec6571bcd11097a07e67e94c63041f35172cda83859f29
+    name: cronjobs-manifest
+    type: application
+    urls:
+    - https://github.com/s-peam/helm-charts/releases/download/cronjobs-manifest-0.1.0/cronjobs-manifest-0.1.0.tgz
+    version: 0.1.0
   demo:
   - apiVersion: v2
     appVersion: 1.16.0
@@ -11,4 +22,4 @@ entries:
     urls:
     - https://github.com/s-peam/helm-charts/releases/download/demo-0.1.0/demo-0.1.0.tgz
     version: 0.1.0
-generated: "2025-03-03T16:21:29.278879738Z"
+generated: "2025-03-03T19:20:44.151718743Z"
