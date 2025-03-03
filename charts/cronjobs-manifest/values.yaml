@@ -1,0 +1,138 @@
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+jobs:
+  job-1:
+    # docs: https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#concurrency-policy
+    concurrencyPolicy: "Allow" # default is Allow
+
+    # docs: https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#jobs-history-limits
+    failedJobsHistoryLimit: 1 # Number of failed job records to keep
+    successfulJobsHistoryLimit: 3 # Number of successful job records to keep
+
+    # docs: https://kubernetes.io/docs/concepts/containers/images/
+    # image:
+    #   repository: "busybox"
+    #   tag: "latest"
+    #   imagePullPolicy: "IfNotPresent
+    image:
+      repository: "busybox"
+      tag: "latest"
+      imagePullPolicy: "IfNotPresent"
+
+    # docs: https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#schedule-syntax
+    schedule: "0 * * * *"
+
+    # docs: https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#time-zones
+    timeZone: ""
+
+    # docs: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy
+    restartPolicy: ""
+
+    # List of environment variables to inject into the job
+    # env:
+    # - name: ENV_ONE
+    #   value: "one"
+    # - name: ENV_TWO
+    #   value: "two"
+    env: []
+
+    # Pull environment variables from ConfigMaps or Secrets
+    # envFrom:
+    # - secretRef:
+    #     name: secret_data
+    # - configMapRef:
+    #     name: config_data
+    envFrom: []
+
+    # List of commands to run in the container
+    # command: ["/bin/sh"]
+    command: []
+
+    # Arguments for the command
+    # args:
+    #   - "-c"
+    #   - "echo $(date) - hello from $ENV_ONE"
+    #   - "echo $(date) - loaded secret $secret_data"
+      # - "echo $(date) - loaded config $config_data"
+    args: []
+
+    # Resource requests and limits (CPU, memory)
+    # resources:
+    #   limits:
+    #     cpu: 50m
+    #     memory: 256Mi
+    #   requests:
+    #     cpu: 50m
+    #     memory: 256Mi
+    resources: {}
+
+    # List of volume mounts for the container
+    # volumeMounts:
+    # - name: mount-one-volume
+    #   mountPath: /mount-one
+    # - name: mount-two-volume
+    #   mountPath: /mount-two
+    volumeMounts: []
+
+    # Node selector for scheduling the job
+    # nodeSelector:
+    #   type: infra
+    nodeSelector: {}
+
+    # Affinity rules for scheduling
+    # affinity:
+      # nodeAffinity:
+        # requiredDuringSchedulingIgnoredDuringExecution:
+          # nodeSelectorTerms:
+          # - matchExpressions:
+            # - key: doks.digitalocean.com/node-pool
+              # operator: In
+              # values:
+              # - pool-infra
+    affinity: {}
+
+    # Tolerations for taints
+    # tolerations:
+    # - effect: NoSchedule
+    #   operator: Exists
+    tolerations: []
+
+     # List of volumes to attach to the job
+    # volumes:
+    # - name: mount-one-volume
+      # configMap:
+        # name: mount-one
+    # - name: mount-two-volume
+      # configMap:
+        # name: mount-two
+    volumes: []
+
+  # example cron
+  ubuntu:
+    image:
+      repository: ubuntu
+      tag: latest
+      imagePullPolicy: IfNotPresent
+    schedule: "* * * * *"
+    timeZone: "Asia/Bangkok"
+    command: ["/bin/bash"]
+    args:
+      - "-c"
+      - "echo $(date) - hello from ubuntu"
+    resources:
+      limits:
+        cpu: 50m
+        memory: 256Mi
+      requests:
+        cpu: 50m
+        memory: 256Mi
+    failedJobsHistoryLimit: 1
+    successfulJobsHistoryLimit: 3
+    concurrencyPolicy: Allow
+    restartPolicy: OnFailure
+    imagePullSecrets:
+    - username: docker-secret
+    securityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 2000
