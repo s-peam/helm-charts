@@ -1,0 +1,89 @@
+{{- range $jobname, $job := .Values.jobs }}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "cronjobs-manifest.releaseName" $ }}-{{ $jobname }}
+  labels:
+    {{- include "cronjobs-manifest.labels" $ | nindent 4 }}
+spec:
+  schedule: {{ $job.schedule | quote }}
+  timeZone: {{ default "Asia/Bangkok" $job.timeZone | quote }}
+  concurrencyPolicy: {{ default "Allow" $job.concurrencyPolicy }}
+  failedJobsHistoryLimit: {{ default "1" $job.failedJobsHistoryLimit }}
+  successfulJobsHistoryLimit: {{ default "3" $job.successfulJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: {{ include "cronjobs-manifest.releaseName" $ }}
+            cron: {{ $jobname }}
+        spec:
+          {{- with $job.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 14 }}
+          {{- end }}
+          {{- with $job.affinity }}
+          affinity:
+            {{- toYaml . | nindent 14 }}
+          {{- end }}
+          {{- with $job.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 14 }}
+          {{- end }}
+          {{- with $job.volumes }}
+          volumes:
+            {{- toYaml . | nindent 14 }}
+          {{- end }}
+          restartPolicy: {{ default "Always" $job.restartPolicy }}
+          {{- if hasKey $job "imagePullSecrets" }}
+          imagePullSecrets:
+            {{- range $job.imagePullSecrets }}
+            - name: {{ .name }}
+            {{- end }}
+          {{- end }}
+          {{- if and (hasKey $job "serviceAccount") (hasKey $job.serviceAccount "name") }}
+          serviceAccountName: {{ $job.serviceAccount.name }}
+          {{- end }}
+          {{- if hasKey $job "securityContext" }}
+          securityContext:
+            {{- if $job.securityContext.runAsUser }}
+            runAsUser: {{ $job.securityContext.runAsUser }}
+            {{- end }}
+            {{- if $job.securityContext.runAsGroup }}
+            runAsGroup: {{ $job.securityContext.runAsGroup }}
+            {{- end }}
+            {{- if $job.securityContext.fsGroup }}
+            fsGroup: {{ $job.securityContext.fsGroup }}
+            {{- end }}
+          {{- end }}
+          containers:
+          - image: {{ $job.image.repository }}:{{ $job.image.tag }}
+            imagePullPolicy: {{ $job.image.imagePullPolicy }}
+            name: {{ $jobname }}
+            {{- with $job.env }}
+            env:
+              {{- toYaml . | nindent 14 }}
+            {{- end }}
+            {{- with $job.envFrom }}
+            envFrom:
+              {{- toYaml . | nindent 14 }}
+            {{- end }}
+            {{- with $job.command }}
+            command:
+              {{- toYaml . | nindent 14 }}
+            {{- end }}
+            {{- with $job.args }}
+            args:
+              {{- toYaml . | nindent 14 }}
+            {{- end }}
+            {{- with $job.resources }}
+            resources:
+              {{- toYaml . | nindent 14 }}
+            {{- end }}
+            {{- with $job.volumeMounts }}
+            volumeMounts:
+              {{- toYaml . | nindent 14 }}
+            {{- end }}
+{{- end }}
