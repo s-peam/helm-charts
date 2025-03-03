@@ -80,7 +80,7 @@ spec:
             {{- end }}
             {{- if or (and (hasKey $.Values.global "resources") $.Values.global.resources) $job.resources }}
             resources:
-              {{- toYaml (default $.Values.global.resources $job.resources) | nindent 12 }}
+              {{- toYaml (default $.Values.global.resources $job.resources) | nindent 14 }}
             {{- end }}
             {{- $mergedVolumeMounts := concat (default list $.Values.global.volumeMounts) ($job.volumeMounts | default list) }}
             {{- if $mergedVolumeMounts }}
