@@ -24,24 +24,23 @@ spec:
           nodeSelector:
             {{- toYaml . | nindent 14 }}
           {{- end }}
-          {{- with $job.affinity }}
+          {{- if or (and (hasKey $.Values "globalAffinity") $.Values.globalAffinity) $job.affinity }}
           affinity:
-            {{- toYaml . | nindent 14 }}
+            {{- toYaml (default $.Values.globalAffinity $job.affinity) | nindent 12 }}
           {{- end }}
           {{- with $job.tolerations }}
           tolerations:
             {{- toYaml . | nindent 14 }}
           {{- end }}
-          {{- with $job.volumes }}
+          {{- $mergedVolumes := concat (default list $.Values.globalVolumes) ($job.volumes | default list) }}
+          {{- if $mergedVolumes }}
           volumes:
-            {{- toYaml . | nindent 14 }}
+            {{- toYaml $mergedVolumes | nindent 10 }}
           {{- end }}
           restartPolicy: {{ default "OnFailure" $job.restartPolicy }}
-          {{- if hasKey $job "imagePullSecrets" }}
+          {{- with $job.imagePullSecrets }}
           imagePullSecrets:
-            {{- range $job.imagePullSecrets }}
-            - name: {{ .name }}
-            {{- end }}
+            {{- toYaml . | nindent 10 }}
           {{- end }}
           {{- if and (hasKey $job "serviceAccount") (hasKey $job.serviceAccount "name") }}
           serviceAccountName: {{ $job.serviceAccount.name }}
@@ -62,9 +61,10 @@ spec:
           - image: {{ $job.image.repository }}:{{ $job.image.tag }}
             imagePullPolicy: {{ $job.image.imagePullPolicy }}
             name: {{ $jobname }}
-            {{- with $job.env }}
+            {{- $mergedEnv := concat (default list $.Values.globalEnv) ($job.env | default list) }}
+            {{- if $mergedEnv }}
             env:
-              {{- toYaml . | nindent 14 }}
+              {{- toYaml $mergedEnv | nindent 14 }}
             {{- end }}
             {{- with $job.envFrom }}
             envFrom:
@@ -78,12 +78,13 @@ spec:
             args:
               {{- toYaml . | nindent 14 }}
             {{- end }}
-            {{- with $job.resources }}
+            {{- if or (and (hasKey $.Values "globalResources") $.Values.globalResources) $job.resources }}
             resources:
-              {{- toYaml . | nindent 14 }}
+              {{- toYaml (default $.Values.globalResources $job.resources) | nindent 12 }}
             {{- end }}
-            {{- with $job.volumeMounts }}
+            {{- $mergedVolumeMounts := concat (default list $.Values.globalVolumeMounts) ($job.volumeMounts | default list) }}
+            {{- if $mergedVolumeMounts }}
             volumeMounts:
-              {{- toYaml . | nindent 14 }}
+              {{- toYaml $mergedVolumeMounts | nindent 14 }}
             {{- end }}
 {{- end }}
