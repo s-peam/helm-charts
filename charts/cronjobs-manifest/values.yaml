@@ -1,5 +1,39 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
+# globalEnv:
+#   - name: ENV_GLOBAL
+#     value: "global"
+globalEnv: []
+
+# globalAffinity:
+#   nodeAffinity:
+#     requiredDuringSchedulingIgnoredDuringExecution:
+#       nodeSelectorTerms:
+#       - matchExpressions:
+#         - key: doks.digitalocean.com/node-pool
+#           operator: In
+#           values:
+#           - pool-infra
+globalAffinity: {}
+
+# globalResources:
+#   limits:
+#     memory: 1Gi
+#   requests:
+#     memory: 64Mi
+globalResources: {}
+
+# globalVolumeMounts:
+#   - name: global-volume
+#     mountPath: /global
+globalVolumeMounts: []
+
+# globalVolumes:
+#   - name: global-volume
+#     configMap:
+#       name: global
+globalVolumes: []
+
 jobs:
   job-1:
     # docs: https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/#concurrency-policy
