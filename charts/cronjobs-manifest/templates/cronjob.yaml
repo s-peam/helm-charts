@@ -61,10 +61,16 @@ spec:
           - image: {{ $job.image.repository }}:{{ $job.image.tag }}
             imagePullPolicy: {{ $job.image.imagePullPolicy }}
             name: {{ $jobname }}
-            {{- $mergedEnv := concat (default list $.Values.global.env) ($job.env | default list) }}
+            {{- $mergedEnv := dict }}
+            {{- range $.Values.global.env }}
+              {{- $_ := set $mergedEnv .name . }}
+            {{- end }}
+            {{- range $job.env }}
+              {{- $_ := set $mergedEnv .name . }}
+            {{- end }}
             {{- if $mergedEnv }}
             env:
-              {{- toYaml $mergedEnv | nindent 14 }}
+              {{- toYaml (values $mergedEnv) | nindent 14 }}
             {{- end }}
             {{- with $job.envFrom }}
             envFrom:
