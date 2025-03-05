@@ -58,8 +58,22 @@ spec:
             {{- end }}
           {{- end }}
           containers:
-          - image: {{ $job.image.repository }}:{{ $job.image.tag }}
-            imagePullPolicy: {{ $job.image.imagePullPolicy }}
+          {{- $imageRepository := "" }}
+          {{- $imageTag := "" }}
+          {{- $imagePullPolicy := "" }}
+          {{- if hasKey $job "image" }}
+            {{- $imageRepository = $job.image.repository }}
+            {{- $imageTag = $job.image.tag }}
+            {{- $imagePullPolicy = $job.image.imagePullPolicy }}
+          {{- else if hasKey $.Values.global "image" }}
+            {{- $imageRepository = $.Values.global.image.repository }}
+            {{- $imageTag = $.Values.global.image.tag }}
+            {{- $imagePullPolicy = $.Values.global.image.imagePullPolicy }}
+          {{- else }}
+            {{- fail "Error: Either global.image or job.image must be defined!" }}
+          {{- end }}
+          - image: {{ $imageRepository }}:{{ $imageTag }}
+            imagePullPolicy: {{ $imagePullPolicy }}
             name: {{ $jobname }}
             {{- $mergedEnv := dict }}
             {{- range $.Values.global.env }}
