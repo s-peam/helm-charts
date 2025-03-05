@@ -2,10 +2,17 @@
 # Declare variables to be passed into your templates.
 
 global: {}
+  # image:
+  #   repository: nginx
+  #   tag: 1.0.0
+  #   imagePullPolicy: IfNotPresent
+
   # env:
   #   - name: ENV_GLOBAL
   #     value: "global"
-      
+  #   - name: ENV
+  #     value: "dev"
+
   # affinity:
   #   nodeAffinity:
   #     requiredDuringSchedulingIgnoredDuringExecution:
@@ -152,6 +159,9 @@ jobs: {}
   #   args:
   #     - "-c"
   #     - "echo $(date) - hello from ubuntu"
+  #   env:
+  #     - name: ENV
+  #       value: "qa"
   #   resources:
   #     limits:
   #       cpu: 50m
