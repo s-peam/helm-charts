@@ -89,9 +89,12 @@ spec:
                 value: "{{ index $value "value" }}"
               {{- end }}
             {{- end }}
-            {{- with $job.envFrom }}
+            {{- if $job.envFrom }}
             envFrom:
-              {{- toYaml . | nindent 14 }}
+              {{- toYaml $job.envFrom | nindent 14 }}
+            {{- else if hasKey $.Values.global "envFrom" }}
+            envFrom:
+              {{- toYaml $.Values.global.envFrom | nindent 14 }}
             {{- end }}
             {{- with $job.command }}
             command:
