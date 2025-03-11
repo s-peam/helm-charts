@@ -84,7 +84,10 @@ spec:
             {{- end }}
             {{- if $mergedEnv }}
             env:
-              {{- toYaml (values $mergedEnv) | nindent 14 }}
+              {{- range $key, $value := $mergedEnv }}
+              - name: {{ $key }}
+                value: "{{ index $value "value" }}"
+              {{- end }}
             {{- end }}
             {{- with $job.envFrom }}
             envFrom:
